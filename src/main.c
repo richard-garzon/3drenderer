@@ -1,6 +1,4 @@
 #include <SDL2/SDL.h>
-#include <SDL2/SDL_pixels.h>
-#include <SDL2/SDL_render.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -21,6 +19,14 @@ bool initialize_window(void) {
 		fprintf(stderr, "Error initializing SDL.\n");
 		return false;
 	}
+
+	// use SDl to puery the fullscreen width and height maximums
+	SDL_DisplayMode display_mode;
+	SDL_GetCurrentDisplayMode(0, &display_mode);
+
+	window_width = display_mode.w;
+	window_height = display_mode.h;
+
 	// Create SDL Window
 	window =
 		SDL_CreateWindow(NULL, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
@@ -38,6 +44,8 @@ bool initialize_window(void) {
 		fprintf(stderr, "Error creating SDL renderer.\n");
 		return false;
 	}
+
+	SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
 
 	return true;
 }
@@ -73,6 +81,20 @@ void process_input(void) {
 
 void update(void) {}
 
+void draw_grid(void)
+{
+	for(int y = 0; y < window_height; y++)
+	{
+		for (int x = 0; x < window_width; x++)  
+		{
+			if( (x % 10 == 0) || (y % 10 == 0))
+			{
+				color_buffer[(y*window_width) + x] = 0x00000000;
+			}
+		}
+	}
+}
+
 void clear_color_buffer(uint32_t color)
 {
 	for(int y = 0; y < window_height; y++)
@@ -97,6 +119,8 @@ void render_color_buffer(void)
 void render(void) {
 	SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
 	SDL_RenderClear(renderer);
+
+	draw_grid();
 
 	render_color_buffer();
 	clear_color_buffer(0xFFFFFF00);
