@@ -3,7 +3,7 @@
 SDL_Window *window = NULL;
 SDL_Renderer *renderer = NULL;
 uint32_t *color_buffer = NULL;
-SDL_Texture* color_buffer_texture = NULL;
+SDL_Texture *color_buffer_texture = NULL;
 int window_width = 800;
 int window_height = 600;
 
@@ -43,62 +43,46 @@ bool initialize_window(void) {
 	return true;
 }
 
-void draw_rect(int x, int y, int width, int height, uint32_t color)
-{
-	if(((x + width) >= window_width) || ((y + height) >= window_height))
-	{
+void draw_rect(int x, int y, int width, int height, uint32_t color) {
+	if (((x + width) >= window_width) || ((y + height) >= window_height)) {
 		return;
 	}
 
-	for(int j = y; j < (y + height); j++)
-	{
-		for(int i = x; i < (x + width); i++)
-		{
-			color_buffer[(j*window_width) + i] = color;
+	for (int j = y; j < (y + height); j++) {
+		for (int i = x; i < (x + width); i++) {
+			color_buffer[(j * window_width) + i] = color;
 		}
 	}
 }
 
-void draw_grid(void)
-{
-	for(int y = 0; y < window_height; y++)
-	{
-		for (int x = 0; x < window_width; x++)  
-		{
-			if( (x % 10 == 0) || (y % 10 == 0))
-			{
-				color_buffer[(y*window_width) + x] = 0x00000000;
+void draw_grid(void) {
+	for (int y = 0; y < window_height; y++) {
+		for (int x = 0; x < window_width; x++) {
+			if ((x % 10 == 0) || (y % 10 == 0)) {
+				color_buffer[(y * window_width) + x] = 0x00000000;
 			}
 		}
 	}
 }
 
-void clear_color_buffer(uint32_t color)
-{
-	for(int y = 0; y < window_height; y++)
-	{
-		for (int x = 0; x < window_width; x++)  
-		{
-			color_buffer[(y*window_width) + x] = color;
+void clear_color_buffer(uint32_t color) {
+	for (int y = 0; y < window_height; y++) {
+		for (int x = 0; x < window_width; x++) {
+			color_buffer[(y * window_width) + x] = color;
 		}
 	}
 }
 
-void render_color_buffer(void)
-{
-	SDL_UpdateTexture(color_buffer_texture,
-		NULL,
-		color_buffer,
-		(int)(window_width * sizeof(uint32_t)));
+void render_color_buffer(void) {
+	SDL_UpdateTexture(color_buffer_texture, NULL, color_buffer,
+					  (int)(window_width * sizeof(uint32_t)));
 
 	SDL_RenderCopy(renderer, color_buffer_texture, NULL, NULL);
 }
 
-void destroy_window(void)
-{
+void destroy_window(void) {
 	free(color_buffer);
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
 	SDL_Quit();
 }
-

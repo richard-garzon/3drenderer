@@ -1,23 +1,18 @@
-#include <stdio.h>
-#include <stdint.h>
-#include <stdbool.h>
-#include <SDL2/SDL.h>
 #include "display.h"
-
+#include <SDL2/SDL.h>
+#include <stdbool.h>
+#include <stdint.h>
+#include <stdio.h>
 
 bool is_running = false;
 
 void setup(void) {
-	color_buffer = (uint32_t*) malloc(sizeof(uint32_t) * window_width * window_height);
+	color_buffer =
+		(uint32_t *)malloc(sizeof(uint32_t) * window_width * window_height);
 
-	color_buffer_texture = SDL_CreateTexture(
-			renderer,
-			SDL_PIXELFORMAT_ARGB8888,
-			SDL_TEXTUREACCESS_STREAMING,
-			window_width,
-			window_height);
-
-
+	color_buffer_texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888,
+											 SDL_TEXTUREACCESS_STREAMING,
+											 window_width, window_height);
 }
 
 void process_input(void) {
