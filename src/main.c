@@ -10,7 +10,9 @@
 vec3_t cube_points[N_POINTS];
 vec2_t projected_points[N_POINTS];
 
-float fov_factor = 128;
+vec3_t camera_position = {.x = 0, .y = 0, .z = -5};
+
+float fov_factor = 640;
 
 bool is_running = false;
 
@@ -22,7 +24,7 @@ void setup(void)
 	color_buffer_texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888,
 											 SDL_TEXTUREACCESS_STREAMING,
 											 window_width, window_height);
-	
+
 	int point_counter = 0;
 	for (float x = -1; x <= 1; x += 0.25)
 	{
@@ -30,7 +32,7 @@ void setup(void)
 		{
 			for (float z = -1; z <= 1; z += 0.25)
 			{
-				vec3_t new_point = { x, y, z };
+				vec3_t new_point = {x, y, z};
 				cube_points[point_counter++] = new_point;
 			}
 		}
@@ -61,13 +63,10 @@ void process_input(void)
  */
 vec2_t project(vec3_t point)
 {
-	vec2_t projected_point = {
-		.x = (fov_factor) * point.x,
-		.y = (fov_factor) * point.y
-	};
+	vec2_t projected_point = {.x = (fov_factor)*point.x / point.z,
+							  .y = (fov_factor)*point.y / point.z};
 
 	return projected_point;
-
 }
 
 void update(void)
@@ -75,6 +74,8 @@ void update(void)
 	for (int i = 0; i < N_POINTS; i++)
 	{
 		vec3_t point = cube_points[i];
+
+		point.z -= camera_position.z;
 
 		// project the current point
 		vec2_t projected_point = project(point);
@@ -89,18 +90,16 @@ void render(void)
 	draw_grid();
 
 	// loop through all projected points and render them
-	for(int i = 0; i < N_POINTS; i++)
+	for (int i = 0; i < N_POINTS; i++)
 	{
 		vec2_t projected_point = projected_points[i];
+		// the addition of half width and height is for translation
 		draw_rect(projected_point.x + (window_width / 2),
-			projected_point.y + (window_height / 2),
-			4,
-			4,
-			0xFFFF0000);
+				  projected_point.y + (window_height / 2), 4, 4, 0xFFFF0000);
 	}
 
 	render_color_buffer();
-	clear_color_buffer(0x00000000);
+	clear_color_buffer(0xFF000000);
 
 	SDL_RenderPresent(renderer);
 }
