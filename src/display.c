@@ -66,10 +66,8 @@ void draw_grid(void) {
 	}
 }
 
-void draw_pixel(int x, int y, uint32_t color)
-{
-	if (x < window_width && y < window_height)
-	{
+void draw_pixel(int x, int y, uint32_t color) {
+	if (x < window_width && y < window_height) {
 		color_buffer[(window_width * y) + x] = color;
 	}
 }

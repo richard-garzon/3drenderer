@@ -53,7 +53,7 @@ int main(void) {
 
 	setup();
 
-	vec3_t myvector = { 2.0, 3.0, -4.0 };
+	vec3_t myvector = {2.0, 3.0, -4.0};
 
 	while (is_running) {
 		process_input();

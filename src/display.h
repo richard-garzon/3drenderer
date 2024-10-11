@@ -2,7 +2,6 @@
 #define DISPLAY_H
 
 #include <SDL2/SDL.h>
-#include <stdint.h>
 #include <stdbool.h>
 #include <stdint.h>
 
