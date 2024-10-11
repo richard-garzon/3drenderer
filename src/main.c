@@ -1,4 +1,5 @@
 #include "display.h"
+#include "vector.h"
 #include <SDL2/SDL.h>
 #include <stdbool.h>
 #include <stdint.h>
@@ -38,10 +39,11 @@ void render(void) {
 	SDL_RenderClear(renderer);
 
 	draw_grid();
+	draw_pixel(20, 20, 0xFF00FFFF);
 	draw_rect(300, 200, 300, 150, 0xFFFF00FF);
 
 	render_color_buffer();
-	clear_color_buffer(0xFFFFFF00);
+	clear_color_buffer(0x00000000);
 
 	SDL_RenderPresent(renderer);
 }
@@ -50,6 +52,8 @@ int main(void) {
 	is_running = initialize_window();
 
 	setup();
+
+	vec3_t myvector = { 2.0, 3.0, -4.0 };
 
 	while (is_running) {
 		process_input();
