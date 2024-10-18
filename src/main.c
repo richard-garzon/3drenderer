@@ -1,6 +1,7 @@
 #include "display.h"
 #include "vector.h"
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_timer.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -74,7 +75,12 @@ vec2_t project(vec3_t point)
 
 void update(void)
 {
-	while(!SDL_TICKS_PASSED(SDL_GetTicks(), previous_frame_time + FRAME_TARGET_TIME));
+	int time_to_wait = FRAME_TARGET_TIME - (SDL_GetTicks() - previous_frame_time);
+
+	if (time_to_wait > 0 && time_to_wait <= FRAME_TARGET_TIME)
+	{
+		SDL_Delay(time_to_wait);
+	}
 
 	previous_frame_time = SDL_GetTicks();
 
