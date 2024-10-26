@@ -1,3 +1,4 @@
+#include "array.h"
 #include "display.h"
 #include "mesh.h"
 #include "triangle.h"
@@ -5,12 +6,10 @@
 #include <SDL2/SDL.h>
 #include <stdbool.h>
 #include <stdint.h>
-#include "array.h"
 
-triangle_t* triangles_to_render = NULL;
+triangle_t *triangles_to_render = NULL;
 
 vec3_t camera_position = {.x = 0, .y = 0, .z = -5};
-vec3_t cube_rotation = {.x = 0, .y = 0, .z = 0};
 
 float fov_factor = 640;
 
@@ -26,6 +25,8 @@ void setup(void)
 	color_buffer_texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888,
 											 SDL_TEXTUREACCESS_STREAMING,
 											 window_width, window_height);
+
+	load_cube_mesh_data();
 }
 
 void process_input(void)
@@ -73,17 +74,18 @@ void update(void)
 	// init the array of triangles to render
 	triangles_to_render = NULL;
 
-	cube_rotation.x += 0.01;
-	cube_rotation.y += 0.01;
-	cube_rotation.z += 0.01;
+	mesh.rotation.x += 0.01;
+	mesh.rotation.y += 0.01;
+	mesh.rotation.z += 0.01;
 
-	for (int i = 0; i < N_MESH_FACES; i++)
+	int num_faces = array_length(mesh.faces);
+	for (int i = 0; i < num_faces; i++)
 	{
-		face_t mesh_face = mesh_faces[i];
+		face_t mesh_face = mesh.faces[i];
 		vec3_t face_vertices[3];
-		face_vertices[0] = mesh_vertices[mesh_face.a - 1];
-		face_vertices[1] = mesh_vertices[mesh_face.b - 1];
-		face_vertices[2] = mesh_vertices[mesh_face.c - 1];
+		face_vertices[0] = mesh.vertices[mesh_face.a - 1];
+		face_vertices[1] = mesh.vertices[mesh_face.b - 1];
+		face_vertices[2] = mesh.vertices[mesh_face.c - 1];
 
 		triangle_t projected_triangle;
 
@@ -92,11 +94,11 @@ void update(void)
 			vec3_t transformed_vertex = face_vertices[j];
 
 			transformed_vertex =
-				vec3_rotate_x(transformed_vertex, cube_rotation.x);
+				vec3_rotate_x(transformed_vertex, mesh.rotation.x);
 			transformed_vertex =
-				vec3_rotate_y(transformed_vertex, cube_rotation.y);
+				vec3_rotate_y(transformed_vertex, mesh.rotation.y);
 			transformed_vertex =
-				vec3_rotate_z(transformed_vertex, cube_rotation.z);
+				vec3_rotate_z(transformed_vertex, mesh.rotation.z);
 
 			transformed_vertex.z -= -5;
 
@@ -139,6 +141,16 @@ void render(void)
 	SDL_RenderPresent(renderer);
 }
 
+/*
+ * free the memory that was dynamically allocated by the program
+ */
+void free_resources(void)
+{
+	array_free(mesh.faces);
+	array_free(mesh.vertices);
+	free(color_buffer);
+}
+
 int main(void)
 {
 	is_running = initialize_window();
@@ -153,6 +165,7 @@ int main(void)
 	}
 
 	destroy_window();
+	free_resources();
 
 	return 0;
 }
