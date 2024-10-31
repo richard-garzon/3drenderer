@@ -3,6 +3,7 @@
 
 #include "triangle.h"
 #include "vector.h"
+#include <stdio.h>
 
 #define N_CUBE_VERTICES 8
 #define N_CUBE_FACES (6 * 2)
@@ -24,5 +25,7 @@ typedef struct
 extern mesh_t mesh;
 
 void load_cube_mesh_data(void);
+void load_obj_file_data(char *filename);
+char *get_line(FILE *f);
 
 #endif

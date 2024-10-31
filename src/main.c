@@ -26,7 +26,8 @@ void setup(void)
 											 SDL_TEXTUREACCESS_STREAMING,
 											 window_width, window_height);
 
-	load_cube_mesh_data();
+	// load_cube_mesh_data();
+	load_obj_file_data("./assets/sniper.obj");
 }
 
 void process_input(void)
