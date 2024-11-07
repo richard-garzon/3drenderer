@@ -9,7 +9,7 @@
 
 triangle_t *triangles_to_render = NULL;
 
-vec3_t camera_position = {.x = 0, .y = 0, .z = -5};
+vec3_t camera_position = {0, 0, 0};
 
 float fov_factor = 640;
 
@@ -27,7 +27,7 @@ void setup(void)
 											 window_width, window_height);
 
 	// load_cube_mesh_data();
-	load_obj_file_data("./assets/f22.obj");
+	load_obj_file_data("./assets/cube.obj");
 }
 
 void process_input(void)
@@ -88,8 +88,9 @@ void update(void)
 		face_vertices[1] = mesh.vertices[mesh_face.b - 1];
 		face_vertices[2] = mesh.vertices[mesh_face.c - 1];
 
-		triangle_t projected_triangle;
+		vec3_t transformed_vertices[3];
 
+		// transform vertices
 		for (int j = 0; j < 3; j++)
 		{
 			vec3_t transformed_vertex = face_vertices[j];
@@ -101,9 +102,38 @@ void update(void)
 			transformed_vertex =
 				vec3_rotate_z(transformed_vertex, mesh.rotation.z);
 
-			transformed_vertex.z -= -5;
+			transformed_vertex.z -= 5;
 
-			vec2_t projected_point = project(transformed_vertex);
+			transformed_vertices[j] = transformed_vertex;
+		}
+
+		// backface culling
+
+		vec3_t vector_a = transformed_vertices[0];
+		vec3_t vector_b = transformed_vertices[1];
+		vec3_t vector_c = transformed_vertices[2];
+
+		vec3_t vector_ab = vec3_subtract(vector_b, vector_a);
+		vec3_t vector_ac = vec3_subtract(vector_c, vector_a);
+
+		// compute face normal using cross prod
+		vec3_t normal = vec3_cross(vector_ab, vector_ac);
+
+		vec3_t camera_ray = vec3_subtract(camera_position, vector_a);
+
+		float dot_normal_camera = vec3_dot(normal, camera_ray);
+
+		if (dot_normal_camera < 0)
+		{
+			continue;
+		}
+
+		triangle_t projected_triangle;
+
+		// project vertices
+		for (int j = 0; j < 3; j++)
+		{
+			vec2_t projected_point = project(transformed_vertices[j]);
 
 			projected_point.x += (window_width / 2);
 			projected_point.y += (window_height / 2);
