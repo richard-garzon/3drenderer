@@ -116,8 +116,14 @@ void update(void)
 		vec3_t vector_ab = vec3_subtract(vector_b, vector_a);
 		vec3_t vector_ac = vec3_subtract(vector_c, vector_a);
 
+		vec3_normalize(&vector_ab);
+		vec3_normalize(&vector_ac);
+
 		// compute face normal using cross prod
 		vec3_t normal = vec3_cross(vector_ab, vector_ac);
+
+		// normalizing normal
+		vec3_normalize(&normal);
 
 		vec3_t camera_ray = vec3_subtract(camera_position, vector_a);
 
