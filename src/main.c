@@ -156,6 +156,7 @@ void render(void)
 	draw_grid();
 
 	// loop through all projected points and render them
+	/*
 	int num_triangles = array_length(triangles_to_render);
 	for (int i = 0; i < num_triangles; i++)
 	{
@@ -168,6 +169,9 @@ void render(void)
 					  triangle.points[1].x, triangle.points[1].y,
 					  triangle.points[2].x, triangle.points[2].y, 0xFFFF0000);
 	}
+	*/
+
+	draw_filled_triangle(300, 100, 50, 400, 500, 700, 0xFFFF0000);
 
 	// clear array of triangles to render for every frame loop
 	array_free(triangles_to_render);
